@@ -12,3 +12,4 @@ pip install uv
 ```bash
 git clone https://github.com/VivekMara/mcpTerm && cd mcpTerm && uv sync
 ```
+add a .env file in the same project directory with the key name "deepseek-api-key"

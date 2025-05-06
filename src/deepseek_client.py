@@ -10,13 +10,10 @@ from rich.markdown import Markdown
 
 load_dotenv()
 apiKey = os.getenv("deepseek-api-key")
-baseUrl = os.getenv("base-url")
-
-
 
 class MCPClient:
     def __init__(self):
-        self.deepseek = OpenAI(api_key=apiKey, base_url=baseUrl)
+        self.deepseek = OpenAI(api_key=apiKey, base_url="https://api.deepseek.com")
         self.session = None
         self.exit_stack = AsyncExitStack()
         self.console = Console()
