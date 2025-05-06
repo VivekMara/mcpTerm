@@ -73,10 +73,12 @@ class MCPClient:
             "content": query
         }
         ]
+        final_text = []
+        assistant_message_content = []
         response = await self.session.list_tools()
 
+        available_tools = []
         for tool in response.tools:
-            available_tools = []
             tool_desc = {
                 "type":"function",
                 "function":{
@@ -94,9 +96,6 @@ class MCPClient:
             tools=available_tools
         )
 
-        final_text = []
-        assistant_message_content = []
-
         if resp1.choices[0].message.tool_calls == None:
             final_text.append(resp1.choices[0].message.content)
             assistant_message_content.append(resp1.choices[0].message.content)
@@ -107,24 +106,16 @@ class MCPClient:
 
                 result = await self.session.call_tool(tool_name, tool_args)
                 final_text.append(f"[Calling tool {tool_name} with args {tool_args}]")
-                assistant_message_content.append(i)
-
+                assistant_message_content.append(str(i.function))
+                # can you tell me the weather forecast at san francisco?
                 msgs.append({
                     "role": "assistant",
                     "content": str(assistant_message_content)
                 })
                 msgs.append({
                     "role": "user",
-                    "content": [
-                        {
-                            "type": "tool_result",
-                            "tool_use_id": i.id,
-                            "content": str(result.content[0].text)
-                        }
-                    ]
+                    "content": str(result.content)
                 })
-                print("---------------------------------------")
-                print(msgs)
                 resp2 = self.deepseek.chat.completions.create(
                     model="deepseek-chat",
                     max_tokens=1000,
