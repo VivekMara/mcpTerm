@@ -200,6 +200,7 @@ dependencies = [
     { name = "mcp", extra = ["cli"] },
     { name = "openai" },
     { name = "python-dotenv" },
+    { name = "rich" },
 ]
 
 [package.metadata]
@@ -207,6 +208,7 @@ requires-dist = [
     { name = "mcp", extras = ["cli"], specifier = ">=1.7.1" },
     { name = "openai", specifier = ">=1.77.0" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
+    { name = "rich", specifier = ">=14.0.0" },
 ]
 
 [[package]]
