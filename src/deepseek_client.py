@@ -33,74 +33,71 @@ class MCPClient:
         self.console.print("\nConnected to server with tools:", [tool.name for tool in tools])
 
     async def process_query(self, query: str):
-        msgs = [
-        {
-            "role": "system",
-            "content": "You are JARVIS, a helpful AI personal assistant who is willing to serve his master by all means necessary"
-        },
-        {
-            "role": "user",
-            "content": query
-        }
-        ]
-        final_text = []
-        assistant_message_content = []
-        response = await self.session.list_tools()
-
-        available_tools = []
-        for tool in response.tools:
-            tool_desc = {
-                "type":"function",
-                "function":{
-                    "name": tool.name,
-                    "description": tool.description,
-                    "parameters": tool.inputSchema
-                }
+            msgs = [
+            {
+                "role": "system",
+                "content": "You are JARVIS, a helpful AI personal assistant who is willing to serve his master by all means necessary. Always look how the user's query can be solved using the available tools. If the user's query doesn't need any tool calls, only then resort to solve the query using your own intelligence. "
+            },
+            {
+                "role": "user",
+                "content": query
             }
-            available_tools.append(tool_desc)
+            ]
+            final_text = []
+            assistant_message_content = []
+            response = await self.session.list_tools()
 
-        with self.console.status("[bold green] Processing...", spinner="dots"):
-            resp1 = self.deepseek.chat.completions.create(
-                model="deepseek-chat",
-                max_tokens=1000,
-                messages=msgs,
-                tools=available_tools
-            )
+            available_tools = []
+            for tool in response.tools:
+                tool_desc = {
+                    "type":"function",
+                    "function":{
+                        "name": tool.name,
+                        "description": tool.description,
+                        "parameters": tool.inputSchema
+                    }
+                }
+                available_tools.append(tool_desc)
 
-        if resp1.choices[0].message.tool_calls == None:
-            final_text.append(resp1.choices[0].message.content)
-            assistant_message_content.append(resp1.choices[0].message.content)
-            for i in final_text:
-                self.console.print(i)
+            with self.console.status("[bold green] Processing...", spinner="dots"):
+                resp1 = self.deepseek.chat.completions.create(
+                    model="deepseek-chat",
+                    max_tokens=1000,
+                    messages=msgs,
+                    tools=available_tools
+                )
 
-        else:
-            with self.console.status("[bold green] Processing your request...", spinner="dots"):
-                for i in resp1.choices[0].message.tool_calls:
-                    tool_name = i.function.name
-                    tool_args = json.loads(i.function.arguments)
+            if resp1.choices[0].message.tool_calls == None:
+                final_text.append(resp1.choices[0].message.content)
+                assistant_message_content.append(resp1.choices[0].message.content)
+                self.console.print(final_text[0])
+            else:
+                with self.console.status("[bold green] Processing your request...", spinner="dots"):
+                    for i in resp1.choices[0].message.tool_calls:
+                        tool_name = i.function.name
+                        tool_args = json.loads(i.function.arguments)
 
-                    result = await self.session.call_tool(tool_name, tool_args)
-                    final_text.append(f"[Calling tool {tool_name} with args {tool_args}]")
-                    assistant_message_content.append(str(i.function))
-                    # can you tell me the weather forecast at san francisco?
-                    msgs.append({
-                        "role": "assistant",
-                        "content": str(assistant_message_content)
-                    })
-                    msgs.append({
-                        "role": "user",
-                        "content": str(result.content)
-                    })
-                    resp2 = self.deepseek.chat.completions.create(
-                        model="deepseek-chat",
-                        max_tokens=1000,
-                        messages=msgs,
-                        tools=available_tools
-                    )
-                    formatted = Markdown(resp2.choices[0].message.content)
-                    final_text.append(formatted)
-            for i in final_text:
-                self.console.print(i)
+                        result = await self.session.call_tool(tool_name, tool_args)
+                        final_text.append(f"[Calling tool {tool_name} with args {tool_args}]")
+                        assistant_message_content.append(str(i.function))
+                        msgs.append({
+                            "role": "assistant",
+                            "content": str(assistant_message_content)
+                        })
+                        msgs.append({
+                            "role": "user",
+                            "content": str(result.content)
+                        })
+                        resp2 = self.deepseek.chat.completions.create(
+                            model="deepseek-chat",
+                            max_tokens=1000,
+                            messages=msgs,
+                            tools=available_tools
+                        )
+                        formatted = Markdown(resp2.choices[0].message.content)
+                        final_text.append(formatted)
+                for i in final_text:
+                    self.console.print(i)
 
     async def chat_loop(self):
         print("\nMCP Client Started!")
