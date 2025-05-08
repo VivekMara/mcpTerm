@@ -32,7 +32,7 @@ class MCPClient:
         tools = response.tools
         self.console.print("\nConnected to server with tools:", [tool.name for tool in tools])
 
-    async def process_query(self, query: str):
+    async def process_query(self, query: str) -> list:
             msgs = [
             {
                 "role": "system",
@@ -59,7 +59,7 @@ class MCPClient:
                 }
                 available_tools.append(tool_desc)
 
-            with self.console.status("[bold green] Processing...", spinner="dots"):
+            with self.console.status("[bold green] Thinking...", spinner="dots"):
                 resp1 = self.deepseek.chat.completions.create(
                     model="deepseek-chat",
                     max_tokens=1000,
@@ -70,7 +70,7 @@ class MCPClient:
             if resp1.choices[0].message.tool_calls == None:
                 final_text.append(resp1.choices[0].message.content)
                 assistant_message_content.append(resp1.choices[0].message.content)
-                self.console.print(final_text[0])
+                return final_text
             else:
                 with self.console.status("[bold green] Processing your request...", spinner="dots"):
                     for i in resp1.choices[0].message.tool_calls:
@@ -96,8 +96,7 @@ class MCPClient:
                         )
                         formatted = Markdown(resp2.choices[0].message.content)
                         final_text.append(formatted)
-                for i in final_text:
-                    self.console.print(i)
+                return final_text
 
     async def chat_loop(self):
         print("\nMCP Client Started!")
@@ -107,7 +106,9 @@ class MCPClient:
                 query = input("\nQuery: ").strip()
                 if query.lower() == 'quit':
                     break
-                await self.process_query(query)
+                resp = await self.process_query(query)
+                for i in resp:
+                    self.console.print(i)
             except Exception as e:
                 print(f"\nError: {str(e)}")
 
