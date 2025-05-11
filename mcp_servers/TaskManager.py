@@ -60,15 +60,15 @@ def read_tasks() -> list[dict]:
         return [dict(row) for row in cursor.fetchall()]
 
 @mcp.tool()
-def update_tasks_by_keyword(keyword: str) -> str:
+def mark_task_completed_by_id(task_id: int) -> str:
     """
-    Mark all tasks as 'completed' if their title contains `keyword`.
+    Mark a specific task as 'completed' based on its task ID.
 
     Args:
-        keyword (str): Keyword to search in task titles (case-sensitive).
+        task_id (int): ID of the task to update.
 
     Returns:
-        str: Status message (e.g., "Updated 3 tasks").
+        str: Status message (e.g., "Task 5 marked as completed").
     """
     try:
         with sqlite3.connect(dbPath) as conn:
@@ -76,35 +76,40 @@ def update_tasks_by_keyword(keyword: str) -> str:
             cursor.execute("""
                 UPDATE tasks
                 SET status = 'completed', updated_at = ?
-                WHERE LOWER(title) LIKE LOWER(?) AND status != 'completed'
-            """, (datetime.now(), f"%{keyword}%"))
+                WHERE id = ? AND status != 'completed'
+            """, (datetime.now(), task_id))
             conn.commit()
-            return f"Updated {cursor.rowcount} tasks containing '{keyword}'"
+
+            if cursor.rowcount == 0:
+                return f"No task updated. Task {task_id} may not exist or is already completed."
+            return f"Task {task_id} marked as completed."
     except sqlite3.Error as e:
         return f"Error: {e}"
 
+
 @mcp.tool()
-def delete_tasks_by_keyword(keyword: str) -> str:
+def delete_task_by_id(task_id: int) -> str:
     """
-    Delete tasks whose titles partially match a keyword (case-sensitive).
+    Delete a task based on its ID.
 
     Args:
-        keyword (str): Keyword to search in task titles (e.g., "bug").
+        task_id (int): The ID of the task to delete.
 
     Returns:
-        str: Status message (e.g., "Deleted 2 tasks").
+        str: Status message (e.g., "Deleted task 5").
     """
     try:
         with sqlite3.connect(dbPath) as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                DELETE FROM tasks
-                WHERE LOWER(title) LIKE LOWER(?)
-            """, (f"%{keyword}%",))
+            cursor.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
             conn.commit()
-            return f"Deleted {cursor.rowcount} tasks containing '{keyword}'"
+
+            if cursor.rowcount == 0:
+                return f"No task deleted. Task {task_id} may not exist."
+            return f"Deleted task {task_id}"
     except sqlite3.Error as e:
         return f"Error: {e}"
+
 
 if __name__ == "__main__":
     initDB()
