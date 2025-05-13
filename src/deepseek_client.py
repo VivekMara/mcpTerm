@@ -19,12 +19,6 @@ class MCPClient:
         self.exit_stack = AsyncExitStack()
         self.console = Console(record=True)
         self.mcp_servers_path = "./mcp_servers"
-        self.msgs = [
-            {
-                "role": "system",
-                "content": "You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions."
-            }
-        ]
 
     async def startup_menu(self):
         table = Table(title="List of mcp servers")
@@ -60,10 +54,16 @@ class MCPClient:
 
     async def process_query(self, query: str, max_iterations: int) -> list:
             current_iteration = 0
-            self.msgs.append({
+            msgs = [
+                {
+                "role": "system",
+                "content": "You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions."
+            },
+            {
                 "role": "user",
                 "content": query
-            })
+            }
+            ]
             final_text = []
             response = await self.session.list_tools()
 
@@ -85,13 +85,13 @@ class MCPClient:
                     resp = self.deepseek.chat.completions.create(
                         model="deepseek-chat",
                         max_tokens=1000,
-                        messages=self.msgs,
+                        messages=msgs,
                         tools=available_tools
                     )
                     message = resp.choices[0].message
                     if message.tool_calls is None:
                         final_text.append(message.content)
-                        self.msgs.append({
+                        msgs.append({
                             "role": "assistant",
                             "content": str(message.content)
                         })
@@ -102,11 +102,11 @@ class MCPClient:
                             tool_args = json.loads(tool_call.function.arguments)
                             result = await self.session.call_tool(tool_name, tool_args)
                             self.console.print(f"[Calling tool {tool_name} with args {tool_args}]")
-                            self.msgs.append({
+                            msgs.append({
                                 "role": "assistant",
                                 "content": f"Action: {tool_name}({tool_args})\nPAUSE"
                             })
-                            self.msgs.append({
+                            msgs.append({
                                 "role": "user",
                                 "content": f"Observation: {result.content}"
                             })
@@ -120,8 +120,6 @@ class MCPClient:
             try:
                 query = self.console.input("\n [bold cyan]Query: ").strip()
                 if query.lower() == 'quit':
-                    with open("logs.json", "w") as f:
-                        json.dump(self.msgs, f, indent=4)
                     break
                 resp = await self.process_query(query, 5)
                 for i in resp:
