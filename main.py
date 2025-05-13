@@ -18,15 +18,10 @@ async def animate_intro():
                 await asyncio.sleep(0.3)
 
 async def main():
-    if len(sys.argv) < 2:
-        print("Usage: uv run main.py <path_to_server_script>")
-        sys.exit(1)
-
     await animate_intro()
     client = MCPClient()
     try:
-        server_path = os.path.expanduser(sys.argv[1])
-        await client.connect_to_server(server_path=server_path)
+        await client.startup_menu()
         await client.chat_loop()
     finally:
         await client.cleanup()

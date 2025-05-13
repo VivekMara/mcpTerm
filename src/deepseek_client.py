@@ -7,6 +7,7 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from rich.console import Console
 from rich.markdown import Markdown
+from rich.table import Table
 
 load_dotenv()
 apiKey = os.getenv("deepseek-api-key")
@@ -16,13 +17,34 @@ class MCPClient:
         self.deepseek = OpenAI(api_key=apiKey, base_url="https://api.deepseek.com")
         self.session = None
         self.exit_stack = AsyncExitStack()
-        self.console = Console()
-        self.conv_file = "./data/conv_file.json"
+        self.console = Console(record=True)
+        self.mcp_servers_path = "./mcp_servers"
+        self.msgs = [
+            {
+                "role": "system",
+                "content": "You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions."
+            }
+        ]
 
-    def save_resp(self, msg):
-        with open(self.conv_file, "w") as conv_file:
-            json.dump(msg, conv_file, indent=2)
-
+    async def startup_menu(self):
+        table = Table(title="List of mcp servers")
+        table.add_column("Index", justify="centre", style="cyan", no_wrap=True)
+        table.add_column("Title", justify="centre", style="cyan", no_wrap=True)
+        table.add_column("Description", justify="centre", style="cyan", no_wrap=True)
+        mcp_servers = os.listdir(self.mcp_servers_path)
+        index = 0
+        for server in mcp_servers:
+            index += 1
+            table.add_row(str(index), server, "TBD")
+        self.console.print(table)
+        try:
+            inp = self.console.input("\n [bold cyan]So what server are you choosing?? (specify the index): ")
+            server_name = mcp_servers[int(inp) - 1]
+            await self.connect_to_server(f"{self.mcp_servers_path}/{server_name}")
+        except Exception as e:
+            self.console.print(f"\nError: {e}")
+            await self.cleanup()
+            
     async def connect_to_server(self, server_path:str):
         server_params = StdioServerParameters(command="python", args=[server_path], env=None)
 
@@ -32,23 +54,16 @@ class MCPClient:
 
         await self.session.initialize()
 
-        # List available tools
         response = await self.session.list_tools()
         tools = response.tools
         self.console.print("\nConnected to server with tools:", [tool.name for tool in tools])
 
     async def process_query(self, query: str, max_iterations: int) -> list:
             current_iteration = 0
-            msgs = [
-            {
-                "role": "system",
-                "content": "You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions."
-            },
-            {
+            self.msgs.append({
                 "role": "user",
                 "content": query
-            }
-            ]
+            })
             final_text = []
             response = await self.session.list_tools()
 
@@ -70,12 +85,16 @@ class MCPClient:
                     resp = self.deepseek.chat.completions.create(
                         model="deepseek-chat",
                         max_tokens=1000,
-                        messages=msgs,
+                        messages=self.msgs,
                         tools=available_tools
                     )
                     message = resp.choices[0].message
                     if message.tool_calls is None:
                         final_text.append(message.content)
+                        self.msgs.append({
+                            "role": "assistant",
+                            "content": str(message.content)
+                        })
                         return final_text
                     else:
                         for tool_call in message.tool_calls:
@@ -83,11 +102,11 @@ class MCPClient:
                             tool_args = json.loads(tool_call.function.arguments)
                             result = await self.session.call_tool(tool_name, tool_args)
                             self.console.print(f"[Calling tool {tool_name} with args {tool_args}]")
-                            msgs.append({
+                            self.msgs.append({
                                 "role": "assistant",
                                 "content": f"Action: {tool_name}({tool_args})\nPAUSE"
                             })
-                            msgs.append({
+                            self.msgs.append({
                                 "role": "user",
                                 "content": f"Observation: {result.content}"
                             })
@@ -99,14 +118,16 @@ class MCPClient:
         print("Type your queries or 'quit' to exit.")
         while True:
             try:
-                query = input("\nQuery: ").strip()
+                query = self.console.input("\n [bold cyan]Query: ").strip()
                 if query.lower() == 'quit':
+                    with open("logs.json", "w") as f:
+                        json.dump(self.msgs, f, indent=4)
                     break
                 resp = await self.process_query(query, 5)
                 for i in resp:
                     self.console.print(Markdown(i))
             except Exception as e:
-                print(f"\nError: {str(e)}")
+                self.console.print(f"\nError: {str(e)}")
 
     async def cleanup(self):
         await self.exit_stack.aclose()
