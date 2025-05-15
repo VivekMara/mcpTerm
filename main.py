@@ -18,7 +18,7 @@ async def animate_intro():
                 await asyncio.sleep(0.3)
 
 async def main():
-    await animate_intro()
+    # await animate_intro()
     client = MCPClient()
     try:
         await client.startup_menu()

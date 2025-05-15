@@ -2,6 +2,8 @@
 a cli for interacting with mcp servers using your favourite llm providers
 *currently only supports deepseek
 
+[![Watch the video](thumbnail.png)](./assets/mcpTerm.mp4)
+
 ---
 
 # installation
