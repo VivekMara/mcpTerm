@@ -1,8 +1,6 @@
 # mcpTerm
-a cli for interacting with mcp servers using your favourite llm providers
+a cli for interacting with mcp servers using your favourite llm providers,
 *currently only supports deepseek
-
-[![Watch the video](thumbnail.png)](./assets/mcpTerm.mp4)
 
 ---
 
@@ -28,3 +26,5 @@ add a .env file in the same project directory with the key name "deepseek-api-ke
 ```bash
 uv run main.py
 ```
+
+to use your own mcp servers, simply add the mcp server file into the mcp_servers directory.
