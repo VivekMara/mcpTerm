@@ -8,6 +8,10 @@ from mcp.client.stdio import stdio_client
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.table import Table
+from sentence_transformers import SentenceTransformer
+import chromadb
+from datetime import datetime
+import uuid
 
 load_dotenv()
 apiKey = os.getenv("deepseek-api-key")
@@ -19,6 +23,19 @@ class MCPClient:
         self.exit_stack = AsyncExitStack()
         self.console = Console(record=True)
         self.mcp_servers_path = "./mcp_servers"
+        self.embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+        self.chromadb_client = chromadb.PersistentClient("./vector_data")
+        self.session_msgs = []
+
+    async def save_convos(self):
+        collection = self.chromadb_client.get_or_create_collection("user_convos")
+        embeddings = self.embedding_model.encode(self.session_msgs)
+        ids = []
+        for msg in self.session_msgs:
+            ids.append(msg["id"])
+        collection.upsert(embeddings=embeddings, ids=ids)
+        self.console.print("Saved the messages successfully")
+        self.console.print(self.session_msgs)
 
     async def startup_menu(self):
         table = Table(title="List of mcp servers")
@@ -38,7 +55,7 @@ class MCPClient:
         except Exception as e:
             self.console.print(f"\nError: {e}")
             await self.cleanup()
-            
+
     async def connect_to_server(self, server_path:str):
         server_params = StdioServerParameters(command="python", args=[server_path], env=None)
 
@@ -54,16 +71,17 @@ class MCPClient:
 
     async def process_query(self, query: str, max_iterations: int) -> list:
             current_iteration = 0
-            msgs = [
-                {
+            system_msg = {
+                "id": str(uuid.uuid4()),
                 "role": "system",
-                "content": "You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions."
-            },
-            {
+                "content": f"You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions.The current time is {datetime.now()}"
+            }
+            self.session_msgs.append(system_msg)
+            self.session_msgs.append({
+                "id": str(uuid.uuid4()),
                 "role": "user",
                 "content": query
-            }
-            ]
+            })
             final_text = []
             response = await self.session.list_tools()
 
@@ -85,13 +103,14 @@ class MCPClient:
                     resp = self.deepseek.chat.completions.create(
                         model="deepseek-chat",
                         max_tokens=1000,
-                        messages=msgs,
+                        messages=self.session_msgs,
                         tools=available_tools
                     )
                     message = resp.choices[0].message
                     if message.tool_calls is None:
                         final_text.append(message.content)
-                        msgs.append({
+                        self.session_msgs.append({
+                            "id": str(uuid.uuid4()),
                             "role": "assistant",
                             "content": str(message.content)
                         })
@@ -102,11 +121,13 @@ class MCPClient:
                             tool_args = json.loads(tool_call.function.arguments)
                             result = await self.session.call_tool(tool_name, tool_args)
                             self.console.print(f"[Calling tool {tool_name} with args {tool_args}]")
-                            msgs.append({
+                            self.session_msgs.append({
+                                "id": str(uuid.uuid4()),
                                 "role": "assistant",
                                 "content": f"Action: {tool_name}({tool_args})\nPAUSE"
                             })
-                            msgs.append({
+                            self.session_msgs.append({
+                                "id": str(uuid.uuid4()),
                                 "role": "user",
                                 "content": f"Observation: {result.content}"
                             })
@@ -120,6 +141,7 @@ class MCPClient:
             try:
                 query = self.console.input("\n [bold cyan]Query: ").strip()
                 if query.lower() == 'quit':
+                    await self.save_convos()
                     break
                 resp = await self.process_query(query, 5)
                 for i in resp:

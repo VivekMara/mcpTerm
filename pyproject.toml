@@ -11,4 +11,6 @@ dependencies = [
     "openai>=1.77.0",
     "python-dotenv>=1.1.0",
     "rich>=14.0.0",
+    "sentence-transformers>=4.1.0",
+    "sqlite-vec>=0.1.6",
 ]
