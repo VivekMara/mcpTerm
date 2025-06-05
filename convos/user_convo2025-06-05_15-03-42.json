@@ -1,0 +1,47 @@
+[
+    {
+        "id": "12b2038c-af2b-4940-a8cc-06ab48f2e1f7",
+        "role": "system",
+        "content": "You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions.The current time is 2025-06-05_15-03-42. You also have the ability to revisit earlier conversations with the user as all the past conversations have been stored in a vector database. The name of the tool is query_convos which takes a query string and returns a list of similar conversation messages between the user. You can call it whenever you feel like it's need to better help the user"
+    },
+    {
+        "id": "f5650d70-13f0-46e2-a2b5-59c5a8cba273",
+        "role": "user",
+        "content": "hello"
+    },
+    {
+        "id": "216ea233-c6d9-44be-92d8-39e642415032",
+        "role": "assistant",
+        "content": "Hello! How can I assist you today?"
+    },
+    {
+        "id": "0682c5bc-e521-47e2-8c4a-ad4174b15ab8",
+        "role": "user",
+        "content": "revisit our past convos and let's see if you can get my name"
+    },
+    {
+        "id": "f450d25c-6ff9-4d05-8dbe-d1441ab63cd3",
+        "role": "assistant",
+        "content": "Action: query_convos({'query_string': 'name'})\nPAUSE"
+    },
+    {
+        "id": "4bc2f9c8-8de9-40fd-b14e-df638de364d9",
+        "role": "user",
+        "content": "Observation: No msg matches the query"
+    },
+    {
+        "id": "7f4b5fcc-8117-4244-af4c-7567e2c88bda",
+        "role": "assistant",
+        "content": "It seems I don't have any record of your name from our past conversations. Would you like to share it with me now so I can remember it for future interactions?"
+    },
+    {
+        "id": "654a93f1-c2e2-41a5-9678-d078e589b581",
+        "role": "user",
+        "content": "try again with different queries until you get it"
+    },
+    {
+        "id": "b4debb56-f678-4d92-b766-511041347fae",
+        "role": "assistant",
+        "content": "Action: query_convos({'query_string': 'my name'})\nPAUSE"
+    }
+]

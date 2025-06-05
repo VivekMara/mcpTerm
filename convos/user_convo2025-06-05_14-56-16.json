@@ -1,0 +1,72 @@
+[
+    {
+        "id": "1a775017-165d-402e-8c3c-b88fbc680f36",
+        "role": "system",
+        "content": "You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions.The current time is 2025-06-05_14-56-16. You also have the ability to revisit earlier conversations with the user as all the past conversations have been stored in a vector database. The name of the tool is query_convos which takes a query string and returns a list of similar conversation messages between the user. You can call it whenever you feel like it's need to better help the user"
+    },
+    {
+        "id": "784f07af-3179-4c37-a515-eac779932a29",
+        "role": "user",
+        "content": "hello"
+    },
+    {
+        "id": "2aec166e-1d6a-4c34-9a40-329daaf2de39",
+        "role": "assistant",
+        "content": "Hello! How can I assist you today?"
+    },
+    {
+        "id": "91457489-d22c-4e25-b359-71f396944340",
+        "role": "system",
+        "content": "You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions.The current time is 2025-06-05_14-56-16. You also have the ability to revisit earlier conversations with the user as all the past conversations have been stored in a vector database. The name of the tool is query_convos which takes a query string and returns a list of similar conversation messages between the user. You can call it whenever you feel like it's need to better help the user"
+    },
+    {
+        "id": "cb464939-7833-4a88-8281-ecd5bc396c6e",
+        "role": "user",
+        "content": "revisit our past convos and tell me my name"
+    },
+    {
+        "id": "5b92445d-5cb0-4237-b68c-6fded9d201e0",
+        "role": "assistant",
+        "content": "Action: query_convos({'query_string': 'my name'})\nPAUSE"
+    },
+    {
+        "id": "5013a121-6946-4d6b-a2ab-85322e76d883",
+        "role": "user",
+        "content": "Observation: No msg matches the query"
+    },
+    {
+        "id": "6951b6b2-d416-4e9e-b368-c0ca63ec68df",
+        "role": "assistant",
+        "content": "It seems I couldn't find any past conversations where your name was mentioned. Could you remind me of your name so I can address you properly?"
+    },
+    {
+        "id": "97198ee7-dd88-4d61-9cee-aae6a9fdcf52",
+        "role": "system",
+        "content": "You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions.The current time is 2025-06-05_14-56-16. You also have the ability to revisit earlier conversations with the user as all the past conversations have been stored in a vector database. The name of the tool is query_convos which takes a query string and returns a list of similar conversation messages between the user. You can call it whenever you feel like it's need to better help the user"
+    },
+    {
+        "id": "5c7a4bf0-dbb8-4376-8177-06786376abb4",
+        "role": "user",
+        "content": "try again with a different query"
+    },
+    {
+        "id": "104055ef-96f2-4dd4-94cc-9386cf65a230",
+        "role": "assistant",
+        "content": "Action: query_convos({'query_string': 'what is my name'})\nPAUSE"
+    },
+    {
+        "id": "2ccdb73a-261d-4457-867f-8defa1fd2162",
+        "role": "system",
+        "content": "You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions.The current time is 2025-06-05_14-56-16. You also have the ability to revisit earlier conversations with the user as all the past conversations have been stored in a vector database. The name of the tool is query_convos which takes a query string and returns a list of similar conversation messages between the user. You can call it whenever you feel like it's need to better help the user"
+    },
+    {
+        "id": "82b721ff-9282-4c78-8785-21aab0604bee",
+        "role": "user",
+        "content": "try again"
+    },
+    {
+        "id": "6ccb568c-b61e-48a4-b97c-581cbdec8ad6",
+        "role": "assistant",
+        "content": "Action: query_convos({'query_string': 'who am I'})\nPAUSE"
+    }
+]

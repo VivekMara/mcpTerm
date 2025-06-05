@@ -1,6 +1,5 @@
 import asyncio
 from src.deepseek_client import MCPClient
-import os
 from rich.live import Live
 from rich.panel import Panel
 from rich.text import Text
@@ -18,7 +17,7 @@ async def animate_intro():
                 await asyncio.sleep(0.3)
 
 async def main():
-    # await animate_intro()
+    await animate_intro()
     client = MCPClient()
     try:
         await client.startup_menu()
@@ -29,5 +28,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    import sys
     asyncio.run(main())

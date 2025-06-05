@@ -1,0 +1,57 @@
+[
+    {
+        "id": "d3f6b455-609a-45fa-b474-208aa293d185",
+        "role": "system",
+        "content": "You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions.The current time is 2025-06-05_15-11-24. You also have the ability to revisit earlier conversations with the user as all the past conversations have been stored in a vector database. The name of the tool is query_convos which takes a query string (note that when calling the tool you must specify the name of the argument as `query` and nothing else) and returns a list of similar conversation messages between the user. You can call it whenever you feel like it's need to better help the user. When accessing, if you get no results then keep calling the tool with different queries until you get the desired result."
+    },
+    {
+        "id": "882fa952-c65f-4ac1-a831-99629ae48cee",
+        "role": "user",
+        "content": "revisit our past convos and let's see if you can get to know my name"
+    },
+    {
+        "id": "26db5529-474c-4861-b352-d88098f69266",
+        "role": "assistant",
+        "content": "Action: query_convos({'query': 'name'})\nPAUSE"
+    },
+    {
+        "id": "52d4e918-0281-41fb-a0c7-f6234c46ab47",
+        "role": "user",
+        "content": "Observation: No msg matches the query"
+    },
+    {
+        "id": "24800a3d-cde4-4c63-8fc1-0d70c1ee1965",
+        "role": "assistant",
+        "content": "Action: query_convos({'query': 'my name'})\nPAUSE"
+    },
+    {
+        "id": "2624e2ac-8eeb-4743-a3aa-a2524496cf38",
+        "role": "user",
+        "content": "Observation: No msg matches the query"
+    },
+    {
+        "id": "1ec94cd0-891a-4b2e-ab65-0dc636aa9678",
+        "role": "assistant",
+        "content": "Action: query_convos({'query': 'what is my name'})\nPAUSE"
+    },
+    {
+        "id": "47dc83fa-5d01-423a-b5a5-85035e732ec6",
+        "role": "user",
+        "content": "Observation: No msg matches the query"
+    },
+    {
+        "id": "1c5792a0-3435-4e99-90e8-f9b309d9ed78",
+        "role": "assistant",
+        "content": "It seems I don't have any recorded conversations where you explicitly shared your name. Would you like to tell me your name now so I can remember it for future interactions?"
+    },
+    {
+        "id": "0d72fd36-2d94-4038-8e82-2850cb8aed11",
+        "role": "user",
+        "content": "my name is darthman"
+    },
+    {
+        "id": "678cbf4d-2eeb-441e-b4db-72056bb8e463",
+        "role": "assistant",
+        "content": "Got it, Darthman! I'll remember your name for future interactions. Let me know how I can assist you today!"
+    }
+]
