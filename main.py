@@ -1,5 +1,5 @@
 import asyncio
-from src.deepseek_client import MCPClient
+from mcp_client import MCPClient
 from rich.live import Live
 from rich.panel import Panel
 from rich.text import Text
