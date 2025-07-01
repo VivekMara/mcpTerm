@@ -19,13 +19,7 @@ async def animate_intro():
 async def main():
     await animate_intro()
     client = MCPClient()
-    try:
-        await client.startup_menu()
-        await client.chat_loop()
-    finally:
-        await client.cleanup()
-
-
+    await client.chat_loop()
 
 if __name__ == "__main__":
     asyncio.run(main())

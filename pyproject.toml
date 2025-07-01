@@ -5,6 +5,7 @@ description = "a cli for AI agents"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "chromadb>=1.0.13",
     "httpx>=0.28.1",
     "mcp[cli]>=1.7.1",
     "ollama>=0.4.8",

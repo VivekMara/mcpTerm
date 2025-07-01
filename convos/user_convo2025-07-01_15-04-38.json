@@ -1,0 +1,107 @@
+[
+    {
+        "id": "b8f211d3-c828-4cc6-a6bc-ae8082ece97f",
+        "role": "system",
+        "content": "You are JARVIS, a personal AI assistant.You run in a loop of Thought, Action, PAUSE, Observation. At the end of the loop you output an Answer.Use Thought to describe your thoughts about the question or command you have been given.Use Action to run one of the available actions - then return PAUSE.Observation will be the result of running those actions.The current time is 2025-07-01_15-04-38. You also have the ability to revisit earlier conversations with the user as all the past conversations have been stored in a vector database. The name of the tool is query_convos which takes a query string (note that when calling the tool you must specify the name of the argument as `query` and nothing else) and returns a list of similar conversation messages between the user. You can call it whenever you feel like it's need to better help the user. When accessing, if you get no results then keep calling the tool with different queries until you get the desired result."
+    },
+    {
+        "id": "be68f4dc-445b-4272-ae75-aeebbf6f0d2f",
+        "role": "user",
+        "content": "hello"
+    },
+    {
+        "id": "739f597b-3102-4185-8644-d027114355dc",
+        "role": "assistant",
+        "content": "Hello! How can I assist you today?"
+    },
+    {
+        "id": "69c1896a-c901-4993-9255-a7c82215e350",
+        "role": "user",
+        "content": "create a new task for building a saas in one day"
+    },
+    {
+        "id": "69e4f6b5-e5d9-4545-902d-5ed40e755444",
+        "role": "assistant",
+        "content": "Action: create_task({'title': 'Build a SaaS in One Day', 'desc': 'Plan and develop a minimal viable product (MVP) for a SaaS within 24 hours.'})\nPAUSE"
+    },
+    {
+        "id": "03c889c7-3a7f-4444-bdeb-82ee4c8db9a2",
+        "role": "user",
+        "content": "Observation: [TextContent(type='text', text=\"Task 'Build a SaaS in One Day' created successfully at 2025-07-01 15:05:24.303596\", annotations=None)]"
+    },
+    {
+        "id": "f1317b50-51d6-4465-bb72-6e5ad3d8271d",
+        "role": "assistant",
+        "content": "The task \"Build a SaaS in One Day\" has been successfully created. Let me know if you'd like to add more details or set up a plan for this ambitious project!"
+    },
+    {
+        "id": "088bec89-139b-44c1-bacc-f491f9751808",
+        "role": "user",
+        "content": "list all my tasks"
+    },
+    {
+        "id": "3faabed6-11bf-4d3c-bf2b-522d1fef4f98",
+        "role": "assistant",
+        "content": "Action: read_tasks({})\nPAUSE"
+    },
+    {
+        "id": "0d7b4dc2-9589-44f5-a5d2-161592ed25c0",
+        "role": "user",
+        "content": "list my tasks"
+    },
+    {
+        "id": "ed81ce82-ff71-445e-8170-bce7cf0d22f1",
+        "role": "assistant",
+        "content": "Action: read_tasks({})\nPAUSE"
+    },
+    {
+        "id": "7bfa177c-4dad-4c64-a947-f79c6688ba7c",
+        "role": "user",
+        "content": "what are my pending tasks"
+    },
+    {
+        "id": "d14de002-506e-48a1-9ab2-b55ced69b497",
+        "role": "assistant",
+        "content": "Action: read_tasks({})\nPAUSE"
+    },
+    {
+        "id": "3935f2ce-84a0-48d6-866d-dccee8133f33",
+        "role": "user",
+        "content": "mark all my tasks as completed"
+    },
+    {
+        "id": "88b2b52e-61f4-4920-b67e-94a2e464b8e7",
+        "role": "assistant",
+        "content": ""
+    },
+    {
+        "id": "886b0475-0ca6-470c-86c7-ef08769f87e3",
+        "role": "user",
+        "content": "list all my tasks"
+    },
+    {
+        "id": "1b6d764f-4abf-418e-a114-70fcbf35f5cc",
+        "role": "assistant",
+        "content": "Action: read_tasks({})\nPAUSE"
+    },
+    {
+        "id": "8b43383a-2fc0-49e4-812a-3e2b94aab632",
+        "role": "user",
+        "content": "Observation: [TextContent(type='text', text='{\\n  \"id\": 1,\\n  \"title\": \"Build a SaaS in One Day\",\\n  \"description\": \"Plan and develop a minimal viable product (MVP) for a SaaS within 24 hours.\",\\n  \"status\": \"in_progress\",\\n  \"created_at\": \"2025-07-01 15:05:24.303596\",\\n  \"updated_at\": \"2025-07-01 15:05:24.303596\"\\n}', annotations=None)]"
+    },
+    {
+        "id": "e1740ad3-e1c0-4ce6-9fd5-20991cbd7b4f",
+        "role": "assistant",
+        "content": "Here is your current task:\n\n1. **Title**: Build a SaaS in One Day  \n   **Description**: Plan and develop a minimal viable product (MVP) for a SaaS within 24 hours.  \n   **Status**: In Progress  \n   **Created At**: 2025-07-01 15:05:24  \n\nWould you like to mark this task as completed or make any other changes?"
+    },
+    {
+        "id": "cc2cdf4b-dbce-4fe9-a68b-7b933c1e9765",
+        "role": "user",
+        "content": "mark it as completed"
+    },
+    {
+        "id": "139276ba-1141-4e9d-b10f-524642e59900",
+        "role": "assistant",
+        "content": "Action: mark_task_completed_by_id({'task_id': 1})\nPAUSE"
+    }
+]
